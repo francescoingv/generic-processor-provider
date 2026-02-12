@@ -164,6 +164,10 @@ def do_execute():
       __check_parameter_name(parameter_key)
       if isinstance(code_input_params[parameter_key], str):
         string_parameters[parameter_key] = code_input_params[parameter_key]
+      elif isinstance(code_input_params[parameter_key], list):
+        string_parameters[parameter_key] = [
+          str(v) for v in code_input_params[parameter_key]
+        ]
       elif isinstance(code_input_params[parameter_key], bool):
         string_parameters[parameter_key] = ""
       elif isinstance(code_input_params[parameter_key], numbers.Number):

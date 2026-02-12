@@ -203,13 +203,22 @@ def submit_form_request(string_parameters: "dict[str, str]", request_id: str) ->
       os.makedirs(base_local_file_dir)
 
     try:
-      for param_name in string_parameters.keys():
+      for param_name, param_value in string_parameters.items():
+        # Save parameters to DB:
+        if isinstance(param_value, list):
+            db_value = " ".join(param_value)
+        else:
+            db_value = param_value
         db_utils.add_request_parameter(
-            conn, request_id, param_name,
-            string_parameters[param_name]
+            conn, request_id, param_name, db_value
         )
+
+        # Add command line parameters
         command_line_args.append(param_name)
-        command_line_args.append(string_parameters[param_name]) 
+        if isinstance(param_value, list):
+            command_line_args.extend(param_value)
+        else:
+            command_line_args.append(param_value)
     except Exception as ex:
       app.logger.error(
         "Request not completely submitted: aborting. " + str(ex)
