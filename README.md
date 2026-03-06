@@ -1,93 +1,94 @@
+
 # Generic processor provider for pygeoapi plugins
 
-Questo repository contiene una **web application Flask** che implementa
-un servizio generico di esecuzione utilizzato come **servizio di
-elaborazione esterno** per i plugin presenti nel progetto:
+This repository contains a **Flask web application** that implements a
+generic execution service used as an **external processing service**
+for the plugins defined in the project:
 
 https://github.com/francescoingv/ingv-pygeoapi-process-plugins
 
-Il servizio permette di ricevere richieste di esecuzione tramite API
-HTTP, invocare un codice applicativo tramite riga di comando e
-restituire lo stato dell'esecuzione e i risultati.
+The service receives execution requests through HTTP APIs, invokes
+an application code through the command line, and returns the
+execution status and results.
 
-Il progetto è pensato come componente backend per l’esecuzione di processi
-remoti e utilizza un sistema esterno (PostgreSQL) per registrare
-le informazioni relative alle esecuzioni.
+The project is designed as a backend component for executing remote
+processing tasks and uses an external system (PostgreSQL) to record
+execution information.
 
 ------------------------------------------------------------------------
 
 ## Overview
 
-Il servizio è progettato per essere utilizzato insieme ai plugin **INGV
-pygeoapi process plugins**, che implementano processi compatibili con lo
-standard **OGC API - Processes**.
+The service is designed to be used together with the **INGV pygeoapi
+process plugins**, which implement processes compatible with the
+**OGC API - Processes** standard.
 
-In questa architettura:
+In this architecture:
 
--   **pygeoapi** espone i processi tramite API standard
--   i **plugin pygeoapi** gestiscono le richieste di esecuzione
--   questo servizio esegue il codice applicativo richiesto
+- **pygeoapi** exposes processes through standard APIs
+- **pygeoapi plugins** manage execution requests
+- this service executes the requested application code
 
-L'esecuzione dei codici avviene quindi in un servizio separato,
-permettendo:
+The execution of the codes takes place in a separate service,
+allowing:
 
--   isolamento degli ambienti di esecuzione
--   gestione indipendente delle dipendenze
--   maggiore flessibilità nel deployment
-
-------------------------------------------------------------------------
-
-## Flusso di esecuzione
-
-Il servizio espone endpoint HTTP utilizzati dai plugin di pygeoapi.
-
-Flusso semplificato:
-
-1.  il plugin pygeoapi riceve una richiesta di esecuzione
-2.  il plugin invia una richiesta HTTP a questo servizio
-3.  il servizio invoca il codice applicativo configurato sulla macchina locale
-4.  il codice viene eseguito e il servizio raccoglie l'esito dell'esecuzione
-5.  il servizio restituisce il risultato al plugin
-6.  i risultati possono essere recuperati tramite le API esposte da pygeoapi
+- isolation of execution environments
+- independent management of dependencies
+- greater flexibility in deployment
 
 ------------------------------------------------------------------------
 
-## Configurazione
+## Execution workflow
 
-La configurazione del servizio avviene tramite due file principali.
+The service exposes HTTP endpoints used by pygeoapi plugins.
+
+Simplified workflow:
+
+1. the pygeoapi plugin receives an execution request
+2. the plugin sends an HTTP request to this service
+3. the service invokes the configured application code on the local machine
+4. the code is executed and the service collects the execution result
+5. the service returns the result to the plugin
+6. the results can be retrieved through the APIs exposed by pygeoapi
+
+------------------------------------------------------------------------
+
+## Configuration
+
+The service configuration is defined through two main files.
 
 ### `application.ini`
 
-Definisce i parametri dell'applicazione e il comando da eseguire.
+Defines application parameters and the command used to execute the code.
 
-Parametri principali:
+Main parameters:
 
--   `max_allowed_parameter_len`\
-    lunghezza massima del nome di un parametro
+- `max_allowed_parameter_len`  
+  maximum length of a parameter name
 
--   `max_allowed_request_body_size`\
-    dimensione massima della richiesta HTTP
+- `max_allowed_request_body_size`  
+  maximum size of the HTTP request body
 
--   `id_service`\
-    identificativo del servizio
+- `id_service`  
+  identifier of the service
 
--   `command_line`\
-    comando utilizzato per eseguire il codice applicativo
+- `command_line`  
+  command used to execute the application code
 
--   `suppress_stdout`\
-    indica se lo standard output del processo deve essere soppresso
+- `suppress_stdout`  
+  indicates whether the standard output of the process must be suppressed
 
--   `file_root_directory`\
-    directory utilizzata per file di input e output
+- `file_root_directory`  
+  directory used for input and output files
 
 ### `database.ini`
 
-Definisce i parametri di connessione al database PostgreSQL utilizzato
-per gestire le richieste e lo stato dei job.
+Defines the connection parameters to the PostgreSQL database used
+to manage requests and job status.
 
-Esempio:
+Example:
 
-``` ini
+```ini
 [postgresql]
 host=127.0.0.1
 port=5433
@@ -96,83 +97,82 @@ user=ogc_api_user
 password=user
 ```
 
-### Schema del database
+### Database schema
 
-Il servizio richiede la presenza di uno schema PostgreSQL per
-memorizzare le richieste di esecuzione e lo stato dei job.
+The service requires a PostgreSQL schema for storing execution
+requests and job status.
 
-Lo schema è fornito nel file:
+The schema is provided in the file:
 
-``` text
+```text
 postgresql_schema.backup.sql
 ```
 
-Prima di avviare il servizio è necessario creare il database e
-importare lo schema. Ad esempio:
+Before starting the service, the database must be created and the
+schema imported. For example:
 
 ```bash
 psql -U ogc_api_user -d ogc_api -f postgresql_schema.backup.sql
 ```
 
-Lo schema crea le tabelle principali utilizzate dal servizio:
+The schema creates the main tables used by the service:
 
 - `request`
 - `request_parameter`
 
-La tabella `request` memorizza le informazioni relative ai job
-ricevuti ed al loro stato di esecuzione.
+The `request` table stores information about received jobs and their
+execution status.
 
-La tabella `request_parameter` memorizza i parametri associati
-a ciascuna richiesta.
+The `request_parameter` table stores parameters associated with each
+request.
 
-L'utente configurato nel file `database.ini` deve avere i permessi
-di accesso alle tabelle e alle sequenze definite nello schema.
+The user configured in `database.ini` must have access permissions
+to the tables and sequences defined in the schema.
 
-### File di configurazione
+### Configuration files
 
-Le principali configurazioni del servizio sono definite nei file:
+The main configuration files of the service are:
 
 - `va_simple_provider/application.ini`
 - `va_simple_provider/database.ini`
 - `va_simple_provider/logging.cfg`
 
-Prima di avviare il servizio verificare in particolare i parametri di
-connessione al database definiti nel file `database.ini`.
+Before starting the service, verify in particular the database
+connection parameters defined in `database.ini`.
 
-## Codici di elaborazione
+## Processing codes
 
-Il sistema è progettato per eseguire codici applicativi esterni
-definiti tramite il parametro `command_line` nel file di configurazione
-`application.ini`.
+The system is designed to execute external application codes defined
+through the `command_line` parameter in the `application.ini`
+configuration file.
 
-I codici di elaborazione non fanno parte di questo repository
-e possono essere installati e configurati indipendentemente
-dal servizio.
+Processing codes are not part of this repository and can be installed
+and configured independently from the service.
 
 ------------------------------------------------------------------------
 
-## API del servizio
+## Service API
 
-### Esecuzione di un job
+### Execute a job
 
 ```text
 POST /execute
 ```
 
-Il body della richiesta deve contenere un oggetto JSON con i parametri
-di esecuzione.
+The request body must contain a JSON object with the execution
+parameters.
 
-### Informazioni su un job
+### Job information
 
 ```text
 GET /job_info/<job_id>
 ```
 
-Restituisce lo stato dell'esecuzione e le informazioni sul job.
+Returns the execution status and job information.
 
 ------------------------------------------------------------------------
 
-## Struttura del progetto
+## Project structure
 
 ```text
 generic-processor-provider/
@@ -193,19 +193,18 @@ generic-processor-provider/
 
 ---
 
-## Deploy con Docker
+## Docker deployment
 
-Il repository è progettato per essere deployato tramite container
-Docker.
+The repository is designed to be deployed using Docker containers.
 
-Il `Dockerfile` incluso:
+The included `Dockerfile`:
 
--   installa l'applicazione Flask
--   configura i parametri dell'applicazione
--   installa le dipendenze Python
--   avvia il servizio HTTP
+- installs the Flask application
+- configures the application parameters
+- installs Python dependencies
+- starts the HTTP service
 
-Il servizio viene esposto sulla porta:
+The service is exposed on port:
 
 ```text
 5000
@@ -215,63 +214,61 @@ Il servizio viene esposto sulla porta:
 
 ## Requirements
 
-Dipendenze principali:
+Main dependencies:
 
--   Python ≥ 3.12
--   Flask
--   PostgreSQL
--   psycopg2
--   virtualenv / venv-run
+- Python ≥ 3.12
+- Flask
+- PostgreSQL
+- psycopg2
+- virtualenv / venv-run
 
-Le dipendenze Python sono definite nel file `requirements.txt`.
+Python dependencies are defined in the `requirements.txt` file.
 
 ------------------------------------------------------------------------
 
-## Relazione con altri progetti
+## Relation with other projects
 
-Questo progetto implementa il **servizio di elaborazione esterno**
-utilizzato dai plugin definiti nel repository:
+This project implements the **external processing service**
+used by the plugins defined in the repository:
 
 https://github.com/francescoingv/ingv-pygeoapi-process-plugins
 
-I plugin pygeoapi inviano richieste HTTP a questo servizio per eseguire
-i codici applicativi associati ai processi.
+pygeoapi plugins send HTTP requests to this service to execute
+application codes associated with the processes.
 
 ## Related software
 
-Questo repository implementa il servizio di esecuzione utilizzato
-dai plugin definiti nel progetto:
+This repository implements the execution service used by the plugins
+defined in the project:
 
 https://github.com/francescoingv/ingv-pygeoapi-process-plugins
 
-I plugin pygeoapi ricevono le richieste di esecuzione tramite
-le API OGC API - Processes e inoltrano la richiesta a questo servizio,
-che invoca il codice applicativo configurato.
+pygeoapi plugins receive execution requests through the
+OGC API - Processes APIs and forward the request to this service,
+which invokes the configured application code.
 
 ------------------------------------------------------------------------
 
 ## Citation
 
-Se utilizzi questo software in un lavoro scientifico, ti preghiamo di
-citarlo come segue:
+If you use this software in scientific work, please cite it as:
 
 Martinelli, F. (2026). Generic processor provider for external execution services used by INGV pygeoapi process plugins.
 
-Il DOI verrà aggiunto dopo la pubblicazione su Zenodo.
+The DOI will be added after Zenodo publication.
 
 ------------------------------------------------------------------------
 
 ## License
 
-Questo progetto è distribuito sotto licenza **MIT**.
+This project is distributed under the **MIT License**.
 
-Vedere il file `LICENSE` per maggiori dettagli.
+See the `LICENSE` file for details.
 
 ------------------------------------------------------------------------
 
 ## Authors
 
-Francesco Martinelli\
-Istituto Nazionale di Geofisica e Vulcanologia (INGV)\
+Francesco Martinelli  
+Istituto Nazionale di Geofisica e Vulcanologia (INGV)  
 Pisa, Italy
-
