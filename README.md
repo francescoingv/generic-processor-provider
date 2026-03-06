@@ -142,12 +142,21 @@ connection parameters defined in `database.ini`.
 
 ## Processing codes
 
-The system is designed to execute external application codes defined
-through the `command_line` parameter in the `application.ini`
-configuration file.
+The execution service is designed to run external scientific
+processing codes configured through the `command_line` parameter
+in the `application.ini` configuration file.
 
-Processing codes are not part of this repository and can be installed
-and configured independently from the service.
+Current deployments of the platform execute the following codes:
+
+- **solwcad**
+- **conduit**
+- **pybox**
+
+The execution service invokes these codes through command-line
+execution and returns the results to the pygeoapi plugins.
+
+These processing codes are not part of this repository and must
+be installed separately depending on the deployment environment.
 
 ------------------------------------------------------------------------
 
