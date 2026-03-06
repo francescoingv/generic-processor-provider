@@ -237,6 +237,17 @@ https://github.com/francescoingv/ingv-pygeoapi-process-plugins
 I plugin pygeoapi inviano richieste HTTP a questo servizio per eseguire
 i codici applicativi associati ai processi.
 
+## Related software
+
+Questo repository implementa il servizio di esecuzione utilizzato
+dai plugin definiti nel progetto:
+
+https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+
+I plugin pygeoapi ricevono le richieste di esecuzione tramite
+le API OGC API - Processes e inoltrano la richiesta a questo servizio,
+che invoca il codice applicativo configurato.
+
 ------------------------------------------------------------------------
 
 ## Citation
