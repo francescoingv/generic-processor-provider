@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: Generic processor provider for external execution services used by INGV pygeoapi process plugins
+message: "If you use this software, please cite it as below."
+type: software
+
+authors:
+  - family-names: Martinelli
+    given-names: Francesco
+    affiliation: Istituto Nazionale di Geofisica e Vulcanologia (INGV)
+
+repository-code: https://github.com/francescoingv/generic-processor-provider
+license: MIT
+version: 1.0.0
+date-released: 2026-03-06
+
+references:
+  - type: software
+    title: INGV pygeoapi process plugins
+    repository-code: https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+
+# After Zenodo to add:
+# doi: 10.xxxx/zenodo.xxxxxx

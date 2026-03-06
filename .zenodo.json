@@ -1,0 +1,11 @@
+{
+  "title": "Generic processor provider for external execution services used by INGV pygeoapi process plugins",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Martinelli, Francesco",
+      "affiliation": "Istituto Nazionale di Geofisica e Vulcanologia (INGV)"
+    }
+  ],
+  "license": "MIT"
+}
