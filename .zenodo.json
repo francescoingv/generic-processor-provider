@@ -1,6 +1,7 @@
 {
-  "title": "Generic processor provider for external execution services used by INGV pygeoapi process plugins",
+  "title": "Generic processor provider for INGV pygeoapi process plugins",
   "upload_type": "software",
+  "description": "Lightweight generic processor provider acting as an execution service for the INGV pygeoapi processing platform. It receives execution requests from pygeoapi process plugins, executes configured scientific command-line programs, and returns execution status and results. See README.md for detailed architecture and usage documentation.",
   "creators": [
     {
       "name": "Martinelli, Francesco",
@@ -9,13 +10,21 @@
   ],
   "related_identifiers": [
     {
+      "_comment": "overall platform",
       "relation": "isPartOf",
       "identifier": "10.5281/zenodo.18892848",
       "scheme": "doi"
     },
     {
-      "relation": "isSupplementTo",
+      "_comment": "INGV pygeoapi plugins",
+      "relation": "isReferencedBy",
       "identifier": "10.5281/zenodo.18892819",
+      "scheme": "doi"
+    },
+    {
+      "_comment": "pybox: Scientific processing code executed via these plugins",
+      "relation": "references",
+      "identifier": "10.5281/zenodo.18920969",
       "scheme": "doi"
     }
   ],

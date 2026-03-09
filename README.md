@@ -1,63 +1,120 @@
-
-# Generic processor provider for pygeoapi plugins
+# INGV generic processor provider for pygeoapi plugins
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18892842.svg)](https://doi.org/10.5281/zenodo.18892842)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.x-blue.svg)
 
-This repository contains a **Flask web application** that implements a
-generic execution service used as an **external processing service**
-for the plugins defined in the project:
+Lightweight **generic processor provider**, acting as an **execution service**,
+used by the INGV pygeoapi processing platform
+to run scientific command‑line programs requested through **OGC API - Processes**
+services implemented with **pygeoapi**.
 
-https://github.com/francescoingv/ingv-pygeoapi-process-plugins
-
-The service receives execution requests through HTTP APIs, invokes
-an application code through the command line, and returns the
-execution status and results.
-
-The project is designed as a backend component for executing remote
-processing tasks and uses an external system (PostgreSQL) to record
-execution information.
-
-------------------------------------------------------------------------
+---
 
 ## Overview
 
-The service is designed to be used together with the **INGV pygeoapi
-process plugins**, which implement processes compatible with the
-**OGC API - Processes** standard.
+This repository contains a **Flask web application** implementing an
+execution service used by the **INGV pygeoapi process plugins**.
 
-In this architecture:
+The execution service receives execution requests from pygeoapi plugins via HTTP APIs,
+invokes a configured application code through the command line,
+and returns the execution status and results.
 
-- **pygeoapi** exposes processes through standard APIs
-- **pygeoapi plugins** manage execution requests
-- this service executes the requested application code
+The project acts as the **execution layer** of the platform architecture, while:
 
-The execution of the codes takes place in a separate service,
-allowing:
+- **pygeoapi** exposes OGC API - Processes endpoints
+- **pygeoapi plugins** manage process logic and job requests
+- **this service** executes the actual scientific processing code
 
-- isolation of execution environments
-- independent management of dependencies
-- greater flexibility in deployment
+Execution takes place in a dedicated execution environment, enabling:
 
-------------------------------------------------------------------------
+- isolation of runtime environments
+- independent management of software dependencies
+- flexible deployment across different machines
+
+---
+
+## Design principles
+
+The execution service design follows several principles:
+
+- **Minimal execution service** – focused only on executing command‑line applications
+- **Environment isolation** – scientific codes can run on dedicated machines
+- **Generic execution model** – any CLI program can be executed without modifying the service
+- **Decoupled architecture** – API infrastructure and execution environments remain independent
+
+---
+
+## Architecture diagram
+
+```mermaid
+flowchart TD
+
+Client["Client application"] --> API["pygeoapi (OGC API - Processes)"]
+API --> Plugins["pygeoapi process plugins"]
+Plugins --> Provider["generic-processor-provider"]
+Provider --> Code["Scientific processing code (CLI program)"]
+```
+
+---
 
 ## Execution workflow
 
-The service exposes HTTP endpoints used by pygeoapi plugins.
+1. A client sends a processing request to **pygeoapi**.
+2. The corresponding **pygeoapi plugin** receives the request.
+3. The plugin sends an HTTP request to the **generic processor provider**.
+4. The provider executes the configured command‑line program.
+5. The provider collects execution results and job status.
+6. Results are returned to the plugin and exposed through the API.
 
-Simplified workflow:
+---
 
-1. the pygeoapi plugin receives an execution request
-2. the plugin sends an HTTP request to this service
-3. the service invokes the configured application code on the local machine
-4. the code is executed and the service collects the execution result
-5. the service returns the result to the plugin
-6. the results can be retrieved through the APIs exposed by pygeoapi
+## Platform components
 
-------------------------------------------------------------------------
+| Component | Repository | DOI | Role |
+|-----------|------------|-----|------|
+| processing platform | [ingv-pygeoapi-processing-platform](https://github.com/francescoingv/ingv-pygeoapi-processing-platform) | https://doi.org/10.5281/zenodo.18892848 | platform architecture |
+| pygeoapi process plugins | [ingv-pygeoapi-process-plugins](https://github.com/francescoingv/ingv-pygeoapi-process-plugins) | https://doi.org/10.5281/zenodo.18892819 | OGC API process implementation |
+| execution service | [generic-processor-provider](https://github.com/francescoingv/generic-processor-provider) | https://doi.org/10.5281/zenodo.18892842 | remote execution service |
+
+---
+
+## Processing codes
+
+The service executes external scientific processing codes configured
+through the `command_line` parameter defined in `application.ini`.
+
+Examples of scientific codes executed through the platform:
+
+- **pybox** – scientific processing model to simulate the dispersals
+  of a gravity-driven pyroclastic density current (PDC)
+  
+  Repository: https://github.com/silviagians/PyBOX-Web
+  DOI: https://doi.org/10.5281/zenodo.18920969
+
+- **conduit** – scientific processing model for computing the one-dimensional,
+  steady, isothermal, multiphase and multicomponent flow of magma
+  in volcanic conduits
+
+- **solwcad** – scientific processing model to compute the saturation surface of
+  H₂O–CO₂ fluids in silicate melts of arbitrary composition
+
+These codes are not part of this repository and must be installed
+separately depending on the deployment environment.
+
+---
 
 ## Configuration
 
-The service configuration is defined through two main files.
+The execution service configuration is defined by the following files.
+
+### Configuration files
+
+The main configuration files of the execution service are:
+
+- `va_simple_provider/application.ini`
+- `va_simple_provider/database.ini`
+- `va_simple_provider/logging.cfg`
 
 ### `application.ini`
 
@@ -65,28 +122,16 @@ Defines application parameters and the command used to execute the code.
 
 Main parameters:
 
-- `max_allowed_parameter_len`  
-  maximum length of a parameter name
-
-- `max_allowed_request_body_size`  
-  maximum size of the HTTP request body
-
-- `id_service`  
-  identifier of the service
-
-- `command_line`  
-  command used to execute the application code
-
-- `suppress_stdout`  
-  indicates whether the standard output of the process must be suppressed
-
-- `file_root_directory`  
-  directory used for input and output files
+- `max_allowed_parameter_len` - maximum length of a parameter name
+- `max_allowed_request_body_size` - maximum size of the HTTP request body
+- `id_service` - identifier of the service
+- `command_line` - command used to execute the application code
+- `suppress_stdout` - indicates whether the standard output of the process must be suppressed
+- `file_root_directory` - directory used for input and output files
 
 ### `database.ini`
 
-Defines the connection parameters to the PostgreSQL database used
-to manage requests and job status.
+Defines PostgreSQL connection parameters used for storing job information.
 
 Example:
 
@@ -101,17 +146,18 @@ password=user
 
 ### Database schema
 
-The service requires a PostgreSQL schema for storing execution
-requests and job status.
+The execution service requires a PostgreSQL schema to store job execution data.
 
-The schema is provided in the file:
+The schema is provided in:
 
 ```text
 postgresql_schema.backup.sql
 ```
 
 Before starting the service, the database must be created and the
-schema imported. For example:
+schema imported.
+To import the schema:
+
 
 ```bash
 psql -U ogc_api_user -d ogc_api -f postgresql_schema.backup.sql
@@ -131,36 +177,7 @@ request.
 The user configured in `database.ini` must have access permissions
 to the tables and sequences defined in the schema.
 
-### Configuration files
-
-The main configuration files of the service are:
-
-- `va_simple_provider/application.ini`
-- `va_simple_provider/database.ini`
-- `va_simple_provider/logging.cfg`
-
-Before starting the service, verify in particular the database
-connection parameters defined in `database.ini`.
-
-## Processing codes
-
-The execution service is designed to run external scientific
-processing codes configured through the `command_line` parameter
-in the `application.ini` configuration file.
-
-Current deployments of the platform execute the following codes:
-
-- **solwcad**
-- **conduit**
-- **pybox**
-
-The execution service invokes these codes through command-line
-execution and returns the results to the pygeoapi plugins.
-
-These processing codes are not part of this repository and must
-be installed separately depending on the deployment environment.
-
-------------------------------------------------------------------------
+---
 
 ## Service API
 
@@ -170,8 +187,12 @@ be installed separately depending on the deployment environment.
 POST /execute
 ```
 
-The request body must contain a JSON object with the execution
-parameters.
+The request body must contain a JSON object describing the execution parameters
+sent by the pygeoapi plugin when invoking the execution service.
+
+The detailed request structure is described in the plugin documentation:
+
+https://github.com/francescoingv/ingv-pygeoapi-process-plugins#external-processing-service-interface
 
 ### Job information
 
@@ -181,7 +202,7 @@ GET /job_info/<job_id>
 
 Returns the execution status and job information.
 
-------------------------------------------------------------------------
+---
 
 ## Project structure
 
@@ -206,26 +227,19 @@ generic-processor-provider/
 
 ## Docker deployment
 
-The repository is designed to be deployed using Docker containers.
+The repository can be deployed using Docker.
 
-The included `Dockerfile`:
+Default service port:
 
-- installs the Flask application
-- configures the application parameters
-- installs Python dependencies
-- starts the HTTP service
-
-The service is exposed on port:
-
-```text
+```
 5000
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Requirements
 
-Main dependencies:
+Main runtime dependencies:
 
 - Python ≥ 3.12
 - Flask
@@ -233,47 +247,46 @@ Main dependencies:
 - psycopg2
 - virtualenv / venv-run
 
-Python dependencies are defined in the `requirements.txt` file.
+Python dependencies are defined in:
 
-------------------------------------------------------------------------
+```
+requirements.txt
+```
 
-## Relation with other projects
+---
 
-This project implements the **external processing service**
-used by the plugins defined in the repository:
+## Related projects
 
-https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+This repository is a component of the **INGV pygeoapi processing platform**.
 
-pygeoapi plugins send HTTP requests to this service to execute
-application codes associated with the processes.
+The platform consists of the following main software components:
 
-## Related software
+- **Processing platform**
+  https://github.com/francescoingv/ingv-pygeoapi-processing-platform
+  DOI: https://doi.org/10.5281/zenodo.18892848
 
-This repository is a component of the **INGV pygeoapi processing platform**:
+- **pygeoapi process plugins**
+  https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+  DOI: https://doi.org/10.5281/zenodo.18892819
 
-https://github.com/francescoingv/ingv-pygeoapi-processing-platform  
-Platform DOI: https://doi.org/10.5281/zenodo.18892848
+The **pygeoapi plugins** expose processing services through the
+**OGC API - Processes** standard and forward execution requests to
+the **generic processor provider**, which executes the configured
+scientific application code.
 
-The pygeoapi plugins using this execution service are defined in:
+Together these components implement the architecture of the
+**INGV pygeoapi processing platform**.
 
-https://github.com/francescoingv/ingv-pygeoapi-process-plugins  
-DOI: https://doi.org/10.5281/zenodo.18892819
-
-pygeoapi plugins receive execution requests through the OGC API - Processes
-APIs and forward the request to this service, which invokes the configured
-application code.
-
-------------------------------------------------------------------------
+---
 
 ## Citation
 
-If you use this software in scientific work, please cite it as:
-
-Martinelli, F. (2026).  
-*Generic processor provider for external execution services used by INGV pygeoapi process plugins*.  
+Martinelli, F. (2026).
+*Generic processor provider for external execution services used by
+INGV pygeoapi process plugins*.
 DOI: https://doi.org/10.5281/zenodo.18892842
 
-------------------------------------------------------------------------
+---
 
 ## License
 
@@ -281,10 +294,17 @@ This project is distributed under the **MIT License**.
 
 See the `LICENSE` file for details.
 
-------------------------------------------------------------------------
+---
 
 ## Authors
 
-Francesco Martinelli  
-Istituto Nazionale di Geofisica e Vulcanologia (INGV)  
+Francesco Martinelli
+Istituto Nazionale di Geofisica e Vulcanologia (INGV)
 Pisa, Italy
+
+---
+
+## Acknowledgements
+
+Developed at the **Istituto Nazionale di Geofisica e Vulcanologia (INGV)**.
+
