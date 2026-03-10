@@ -10,19 +10,16 @@
   ],
   "related_identifiers": [
     {
-      "_comment": "overall platform",
       "relation": "isPartOf",
       "identifier": "10.5281/zenodo.18892848",
       "scheme": "doi"
     },
     {
-      "_comment": "INGV pygeoapi plugins",
       "relation": "isReferencedBy",
       "identifier": "10.5281/zenodo.18892819",
       "scheme": "doi"
     },
     {
-      "_comment": "pybox: Scientific processing code executed via these plugins",
       "relation": "references",
       "identifier": "10.5281/zenodo.18920969",
       "scheme": "doi"
