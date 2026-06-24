@@ -1,7 +1,7 @@
 {
-  "title": "Generic processor provider for INGV pygeoapi process plugins",
+  "title": "Generic processor provider for EXPOSE plugins",
   "upload_type": "software",
-  "description": "Lightweight generic processor provider acting as an execution service for the INGV pygeoapi processing platform. It receives execution requests from pygeoapi process plugins, executes configured scientific command-line programs, and returns execution status and results. See README.md for detailed architecture and usage documentation.",
+  "description": "Lightweight generic processor provider acting as an execution service for the EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform. It receives execution requests from pygeoapi process plugins, executes configured scientific command-line programs, and returns execution status and results. See README.md for detailed architecture and usage documentation.",
   "creators": [
     {
       "name": "Martinelli, Francesco",
@@ -9,6 +9,17 @@
     }
   ],
   "license": "MIT",
+  "version": "1.0.3",
+  "publication_date": "2026-06-24",
+  "access_right": "open",
+  "language": "eng",
+  "keywords": [
+    "pygeoapi",
+    "OGC API - Processes",
+    "scientific workflows",
+    "geospatial processing",
+    "processing services"
+  ],
   "related_identifiers": [
     {
       "_comment": "overall platform",
@@ -17,15 +28,17 @@
       "scheme": "doi"
     },
     {
-      "_comment": "INGV pygeoapi plugins",
+      "_comment": "Plugins for the EXPOSE platform project",
       "relation": "isReferencedBy",
       "identifier": "10.5281/zenodo.18892819",
+      "resource_type": "software",
       "scheme": "doi"
     },
     {
       "_comment": "pybox: Scientific processing code executed via these plugins",
       "relation": "references",
       "identifier": "10.5281/zenodo.18920969",
+      "resource_type": "software",
       "scheme": "doi"
     }
   ]

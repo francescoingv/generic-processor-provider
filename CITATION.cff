@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: Generic processor provider for INGV pygeoapi process plugins
+title: Generic processor provider for EXPOSE plugins
 message: "If you use this software, please cite it as below."
 type: software
 
@@ -13,8 +13,8 @@ url: https://github.com/francescoingv/generic-processor-provider
 
 abstract: >
   Lightweight generic processor provider acting as an execution service
-  for the INGV pygeoapi processing platform. It receives execution
-  requests from pygeoapi process plugins, runs configured scientific
+  for the EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform.
+  It receives execution requests from pygeoapi process plugins, runs configured scientific
   command-line programs, and returns execution status and results.
 
 keywords:
@@ -25,18 +25,24 @@ keywords:
   - command-line processing
 
 license: MIT
-version: 1.0.2
-date-released: 2026-03-06
+version: 1.0.3
+date-released: 2026-06-24
 doi: 10.5281/zenodo.18892842
 
 references:
   - type: software
-    title: INGV pygeoapi processing platform
-    repository-code: https://github.com/francescoingv/ingv-pygeoapi-processing-platform
+    title: EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform
+    repository-code: https://github.com/francescoingv/expose-pygeoapi-platform
     doi: 10.5281/zenodo.18892848
 
   - type: software
-    title: INGV pygeoapi process plugins
-    repository-code: https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+    title: EXPOSE plugins
+    repository-code: https://github.com/francescoingv/expose-pygeoapi-plugins
     doi: 10.5281/zenodo.18892819
+
+  - type: software
+    title: PyBOX-Web
+    repository-code: https://github.com/silviagians/PyBOX-Web
+    doi: 10.5281/zenodo.18920969
+
 

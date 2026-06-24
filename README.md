@@ -1,11 +1,11 @@
-# INGV generic processor provider for pygeoapi plugins
+# Generic processor provider for EXPOSE plugins
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18892842.svg)](https://doi.org/10.5281/zenodo.18892842)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.x-blue.svg)
 
 Lightweight **generic processor provider**, acting as an **execution service**,
-used by the INGV pygeoapi processing platform
+used by the EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform
 to run scientific command‑line programs requested through **OGC API - Processes**
 services implemented with **pygeoapi**.
 
@@ -14,7 +14,7 @@ services implemented with **pygeoapi**.
 ## Overview
 
 This repository contains a **Flask web application** implementing an
-execution service used by the **INGV pygeoapi process plugins**.
+execution service used by the **EXPOSE plugins**.
 
 The execution service receives execution requests from pygeoapi plugins via HTTP APIs,
 invokes a configured application code through the command line,
@@ -73,8 +73,8 @@ Provider --> Code["Scientific processing code (CLI program)"]
 
 | Component | Repository | DOI | Role |
 |-----------|------------|-----|------|
-| processing platform | [ingv-pygeoapi-processing-platform](https://github.com/francescoingv/ingv-pygeoapi-processing-platform) | https://doi.org/10.5281/zenodo.18892848 | platform architecture |
-| pygeoapi process plugins | [ingv-pygeoapi-process-plugins](https://github.com/francescoingv/ingv-pygeoapi-process-plugins) | https://doi.org/10.5281/zenodo.18892819 | OGC API process implementation |
+| processing platform | [expose-pygeoapi-platform](https://github.com/francescoingv/expose-pygeoapi-platform) | https://doi.org/10.5281/zenodo.18892848 | platform architecture |
+| pygeoapi process plugins | [expose-pygeoapi-plugins](https://github.com/francescoingv/expose-pygeoapi-plugins) | https://doi.org/10.5281/zenodo.18892819 | OGC API process implementation |
 | execution service | [generic-processor-provider](https://github.com/francescoingv/generic-processor-provider) | https://doi.org/10.5281/zenodo.18892842 | remote execution service |
 
 ---
@@ -192,7 +192,7 @@ sent by the pygeoapi plugin when invoking the execution service.
 
 The detailed request structure is described in the plugin documentation:
 
-https://github.com/francescoingv/ingv-pygeoapi-process-plugins#external-processing-service-interface
+https://github.com/francescoingv/expose-pygeoapi-plugins#external-processing-service-interface
 
 ### Job information
 
@@ -257,16 +257,16 @@ requirements.txt
 
 ## Related projects
 
-This repository is a component of the **INGV pygeoapi processing platform**.
+This repository is a component of the **EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform**.
 
 The platform consists of the following main software components:
 
 - **Processing platform**
-  https://github.com/francescoingv/ingv-pygeoapi-processing-platform
+  https://github.com/francescoingv/expose-pygeoapi-platform
   DOI: https://doi.org/10.5281/zenodo.18892848
 
 - **pygeoapi process plugins**
-  https://github.com/francescoingv/ingv-pygeoapi-process-plugins
+  https://github.com/francescoingv/expose-pygeoapi-plugins
   DOI: https://doi.org/10.5281/zenodo.18892819
 
 The **pygeoapi plugins** expose processing services through the
@@ -275,15 +275,14 @@ the **generic processor provider**, which executes the configured
 scientific application code.
 
 Together these components implement the architecture of the
-**INGV pygeoapi processing platform**.
+**EXPOSE (EXecutables for OGC API PrOcesses and Scientific Environments) platform**.
 
 ---
 
 ## Citation
 
 Martinelli, F. (2026).
-*Generic processor provider for external execution services used by
-INGV pygeoapi process plugins*.
+*Generic processor provider for EXPOSE plugins*.
 DOI: https://doi.org/10.5281/zenodo.18892842
 
 ---
