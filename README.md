@@ -295,7 +295,7 @@ See the `LICENSE` file for details.
 
 ---
 
-## Authors
+## Author
 
 Francesco Martinelli
 Istituto Nazionale di Geofisica e Vulcanologia (INGV)
