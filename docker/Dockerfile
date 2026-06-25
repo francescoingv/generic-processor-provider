@@ -72,7 +72,7 @@ RUN mkdir -p /venvs \
 ENV PATH="/venvs/flask/bin:$PATH"
 
 # ------------------------------------------------------------------------------
-# INSTALLATIUON OF THE GENERIC APP (Flask)
+# INSTALLATION OF THE GENERIC APP (Flask)
 # ------------------------------------------------------------------------------
 
 RUN git clone \
@@ -101,7 +101,6 @@ RUN sed -i 's/\$IP_ADDRESS_POSTGRES_SERVER\$/'${IP_ADDRESS_POSTGRES_SERVER}'/g' 
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-
 # ------------------------------------------------------------------------------
 # WPS SPECIFIC INSTALLATION 
 # ------------------------------------------------------------------------------
@@ -114,13 +113,12 @@ RUN pip install --upgrade pip \
 
 EXPOSE 5000
 
-# Probabilmente non utilizzato: da verificare ed eventualmente rimuovere
+# Possibly not used: verify if not needed and in case remove:
 ENV ENV_IP_ADDRESS_POSTGRES_SERVER=${IP_ADDRESS_POSTGRES_SERVER}
 
 # ------------------------------------------------------------------------------
 # START THE SERVICE
 # ------------------------------------------------------------------------------
-
 
 # Start the service:
 # - Thanks to PATH above, 'python' refer to what is inside /venvs/flask
